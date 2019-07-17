@@ -6,6 +6,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
+# location model to store data
 class Location(db.Model):
     __tablename__ = 'location'
     id = db.Column(db.Integer,primary_key=True)
@@ -14,6 +15,7 @@ class Location(db.Model):
     angle = db.Column(db.Integer)
     direction = db.Column(db.String(100))
 
+# saves the location data
 
 @app.route('/location_save',methods=['POST'])
 def location_save():
@@ -29,6 +31,7 @@ def location_save():
 
     return jsonify({ "latitude":location.latitude , "longitude" : location.longitude , "angle":location.angle , "direction":location.direction})
 
+# get details of a location by passing latitude and longitude values in json
 @app.route('/get_location',methods=['GET'])
 def get_location():
 
@@ -44,6 +47,8 @@ def get_location():
 
     return jsonify({"latitude":loc.latitude , "longitude" : loc.longitude , "angle" : loc.angle , "direction" : loc.direction})
 
+
+# link to get all of the location data in the table
 @app.route('/get_all',methods=['GET'])
 def get_all():
 
@@ -63,15 +68,15 @@ def get_all():
 
    return jsonify({"data":data})
 
-@app.route('/delete_all_location',methods=['DELETE'])
-def delete_all_location():
+# @app.route('/delete_all_location',methods=['DELETE'])
+# def delete_all_location():
 
-    # loc = Location.query.all()
-    # db.session.delete(loc)
-    db.session.query(Location).delete()
-    db.session.commit()
+#     # loc = Location.query.all()
+#     # db.session.delete(loc)
+#     db.session.query(Location).delete()
+#     db.session.commit()
 
-    return jsonify({"msg":"Delete"})
+#     return jsonify({"msg":"Delete"})
 
 if __name__ == "__main__":
     # app.run(host="0.0.0.0", port=80)
