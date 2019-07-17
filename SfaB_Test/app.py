@@ -15,6 +15,13 @@ class Location(db.Model):
     angle = db.Column(db.Integer)
     direction = db.Column(db.String(100))
 
+# welcome home page 
+# this seems to be working when i deploy on gcp
+@app.route('/')
+def hello():
+    """Return a friendly HTTP greeting."""
+    return 'Flippingo !!'
+
 # saves the location data
 
 @app.route('/location_save',methods=['POST'])
