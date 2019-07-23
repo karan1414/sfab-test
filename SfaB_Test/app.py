@@ -1,9 +1,38 @@
+import os
 from flask import Flask,request,jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+SECRET_KEY = os.urandom (256)
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# GCP
+CLOUDSQL_USER = os.environ.get("DB_USER")
+CLOUDSQL_PASSWORD = os.environ.get("DB_PASS")
+CLOUDSQL_DATABASE = os.environ.get("DB_NAME")
+CLOUDSQL_CONNECTION_NAME = os.environ.get("CLOUD_SQL_CONNECTION_NAME")
+LOCAL_SQLALCHEMY_DATABASE_URI = (
+    'mysql+pymysql://{nam}:{pas}@127.0.0.1:3306/{dbn}').format (
+    nam=CLOUDSQL_USER,
+    pas=CLOUDSQL_PASSWORD,
+    dbn=CLOUDSQL_DATABASE,
+)
+
+LIVE_SQLALCHEMY_DATABASE_URI = (
+    'mysql+pymysql://{nam}:{pas}@localhost/{dbn}?unix_socket=/cloudsql/{con}').format (
+    nam=CLOUDSQL_USER,
+    pas=CLOUDSQL_PASSWORD,
+    dbn=CLOUDSQL_DATABASE,
+    con=CLOUDSQL_CONNECTION_NAME,
+)
+
+if os.environ.get ('GAE_INSTANCE'):
+    SQLALCHEMY_DATABASE_URI = LIVE_SQLALCHEMY_DATABASE_URI
+else:
+    SQLALCHEMY_DATABASE_URI = LOCAL_SQLALCHEMY_DATABASE_URI
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # location model to store data
